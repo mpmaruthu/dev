@@ -1,0 +1,2 @@
+
+# GitOps ZTP Troubleshooting Guide
