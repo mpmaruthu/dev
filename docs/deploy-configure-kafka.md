@@ -141,10 +141,10 @@ Note: The above configuration creates a Kafka topic to which the logs from the s
 1. The label `strimzi.io/cluster` connecting the Kafka topic and Kafka user CRs to the created Kafka broker CR.
 2. The route CR created automatically with name `kafka-logs-hub4-kafka-bootstrap` for external connectivity. 
 3. You can get the route with the command `oc -n openshift-operators get route kafka-logs-hub4-kafka-bootstrap`
-4. Now, we have access to the external url to access the Kafka broker. From this route, extract the Certificate Authority. 
+4. Now, we have access to the external url to connect to the Kafka broker. 
 5. Later, this route will be used to configure the TLS validation on the spoke clusters.
-6. By default, there are two other listeners `plain` and `tls`. None of them have authentication. 
-7. We will use the `listeners` named `external` for connecting with the logs visualizer (Kafka Console Operator) 
+6. By default, there are two listeners named `plain` and `tls` without authentication enabled. 
+7. We can use the `listeners` named `external` for connecting with the logs visualizer (provided by Kafka Console Operator) 
 if needed.
 
 # Verify the Kafka Broker Deployment
@@ -231,7 +231,7 @@ Note: The above configuration creates a ConfigMap and a Secret for Kafka configu
 
 1. The `ConfigMap` contains the topic name, the external URL of the Kafka broker, and the CA certificate.
 
-`caCrt`  (bundle) extracted from the external kafka broker url. 
+`caCrt`  (bundle) can be extracted from the external kafka broker url. 
 
 Replace `<FQDN>` with the actual fully qualified domain name of your Kafka broker.
 
@@ -244,6 +244,7 @@ awk '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/'
 2. The `Secret` contains the base64 encoded values for the user certificate (`userCrt`) and user key (`userKey`)
 
 `userCrt`and `userKey`are created automatically when creating KakaUser.
+
 ```
 $ oc -n openshift-operators get secret kafka-logs-hub4-user -o yaml | grep -iE 'user.crt|user.key'
     user.crt: LS0tLS1...
@@ -253,6 +254,7 @@ $ oc -n openshift-operators get secret kafka-logs-hub4-user -o yaml | grep -iE '
 # Verify the Kafka Broker Configuration
 To verify that the Kafka broker is configured correctly, you can check the status of the ConfigMap and Secret created 
 for Kafka configuration. Use the following commands:
+
 ```
 $ oc -n ztp-group-mb-du get configmap cluster-logging-kafka
 $ oc -n ztp-group-mb-du get secret cluster-logging-kafka-auth
@@ -272,7 +274,6 @@ If you encounter any issues during the deployment or configuration of the Kafka 
      ```
      oc get events -n openshift-operators
      ```
-   - If you have configured security settings, ensure that your clients are using the correct credentials and SSL/TLS configurations.
 
 # Conclusion
 You have successfully deployed and configured a Kafka broker on the hub cluster.
