@@ -144,8 +144,7 @@ Note: The above configuration creates a Kafka topic to which the logs from the s
 4. Now, we have access to the external url to connect to the Kafka broker. 
 5. Later, this route will be used to configure the TLS validation on the spoke clusters.
 6. By default, there are two listeners named `plain` and `tls` without authentication enabled. 
-7. We can use the `listeners` named `external` for connecting with the logs visualizer (provided by Kafka Console Operator) 
-if needed.
+7. We can use the `listeners` named `external` for connecting with the logs visualizer (provided by Kafka Console Operator) if needed.
 
 # Verify the Kafka Broker Deployment
 
@@ -198,7 +197,8 @@ metadata:
   namespace: ztp-group-mb-du
 data:
   topic: "kafka-logs-hub4-topic" # The topic to which logs will be forwarded.
-  url: "kafka-logs-hub4-kafka-bootstrap-openshift-operators.<FQDN>:443>" # The external URL of the Kafka broker.
+
+  url: "kafka-logs-hub4-kafka-bootstrap-openshift-operators.apps.<FQDN>" # The external URL of the Kafka broker.
   caCrt: | # The CA certificate for the Kafka broker.
     -----BEGIN CERTIFICATE-----
     MIIH.............................AQEN
@@ -237,7 +237,7 @@ Replace `<FQDN>` with the actual fully qualified domain name of your Kafka broke
 
 ```
 $ echo | openssl s_client -showcerts -connect 
-kafka-logs-hub4-kafka-bootstrap-openshift-operators.<FQDN>:443 2>/dev/null | 
+kafka-logs-hub4-kafka-bootstrap-openshift-operators.apps.<FQDN>:443 2>/dev/null | 
 awk '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/'
 ```
 
